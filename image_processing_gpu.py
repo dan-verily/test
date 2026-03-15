@@ -21,7 +21,7 @@ validation_dataset = image_dataset_from_directory(
     new_base_dir / "validation", image_size=image_size, batch_size=batch_size
 )
 test_dataset = image_dataset_from_directory(
-    new_base_dir / "test", image_size=image_size, batch_size=batch_size
+    new_base_dir / "test", image_size=image_size, batch_size=batch_size, shuffle=False
 )
 
 # ---- Build model ----
