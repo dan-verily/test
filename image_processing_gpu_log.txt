@@ -1,0 +1,200 @@
+python3 image_processing_gpu.py
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1773615983.115855   15486 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Found 14355 files belonging to 120 classes.
+I0000 00:00:1773615987.305294   15486 gpu_device.cc:2043] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 13775 MB memory:  -> device: 0, name: Tesla T4, pci bus id: 0000:00:04.0, compute capability: 7.5
+Found 4115 files belonging to 120 classes.
+Found 2110 files belonging to 120 classes.
+Downloading data from https://storage.googleapis.com/keras-applications/efficientnetb0_notop.h5
+16705208/16705208 ━━━━━━━━━━━━━━━━━━━━ 0s 0us/step
+Model: "functional_1"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ Layer (type)                      ┃ Output Shape             ┃       Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ input_layer_1 (InputLayer)        │ (None, 160, 160, 3)      │             0 │
+├───────────────────────────────────┼──────────────────────────┼───────────────┤
+│ sequential (Sequential)           │ (None, 160, 160, 3)      │             0 │
+├───────────────────────────────────┼──────────────────────────┼───────────────┤
+│ efficientnetb0 (Functional)       │ (None, 5, 5, 1280)       │     4,049,571 │
+├───────────────────────────────────┼──────────────────────────┼───────────────┤
+│ global_average_pooling2d          │ (None, 1280)             │             0 │
+│ (GlobalAveragePooling2D)          │                          │               │
+├───────────────────────────────────┼──────────────────────────┼───────────────┤
+│ dropout (Dropout)                 │ (None, 1280)             │             0 │
+├───────────────────────────────────┼──────────────────────────┼───────────────┤
+│ dense (Dense)                     │ (None, 120)              │       153,720 │
+└───────────────────────────────────┴──────────────────────────┴───────────────┘
+ Total params: 4,203,291 (16.03 MB)
+ Trainable params: 153,720 (600.47 KB)
+ Non-trainable params: 4,049,571 (15.45 MB)
+Epoch 1/50
+E0000 00:00:1773616001.606067   15486 meta_optimizer.cc:967] layout failed: INVALID_ARGUMENT: Size of values 0 does not match size of permutation 4 @ fanin shape inStatefulPartitionedCall/functional_1_1/efficientnetb0_1/block2b_drop_1/stateless_dropout/SelectV2-2-TransposeNHWCToNCHW-LayoutOptimizer
+I0000 00:00:1773616005.798732   15515 cuda_dnn.cc:461] Loaded cuDNN version 92000
+113/113 ━━━━━━━━━━━━━━━━━━━━ 37s 205ms/step - accuracy: 0.4023 - loss: 2.8806 - val_accuracy: 0.7232 - val_loss: 1.3758
+Epoch 2/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 20s 176ms/step - accuracy: 0.6437 - loss: 1.4515 - val_accuracy: 0.7580 - val_loss: 0.9517
+Epoch 3/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 20s 176ms/step - accuracy: 0.6879 - loss: 1.1702 - val_accuracy: 0.7708 - val_loss: 0.8305
+Epoch 4/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 20s 177ms/step - accuracy: 0.7145 - loss: 1.0408 - val_accuracy: 0.7784 - val_loss: 0.7717
+Epoch 5/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 20s 179ms/step - accuracy: 0.7292 - loss: 0.9621 - val_accuracy: 0.7823 - val_loss: 0.7389
+Epoch 6/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 20s 180ms/step - accuracy: 0.7420 - loss: 0.9046 - val_accuracy: 0.7847 - val_loss: 0.7246
+Epoch 7/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 21s 184ms/step - accuracy: 0.7514 - loss: 0.8696 - val_accuracy: 0.7835 - val_loss: 0.7111
+Epoch 8/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 21s 182ms/step - accuracy: 0.7574 - loss: 0.8284 - val_accuracy: 0.7840 - val_loss: 0.7038
+Epoch 9/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 21s 183ms/step - accuracy: 0.7706 - loss: 0.7845 - val_accuracy: 0.7869 - val_loss: 0.6975
+Epoch 10/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 21s 184ms/step - accuracy: 0.7665 - loss: 0.7801 - val_accuracy: 0.7864 - val_loss: 0.6930
+Epoch 11/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 21s 184ms/step - accuracy: 0.7810 - loss: 0.7374 - val_accuracy: 0.7878 - val_loss: 0.6891
+Epoch 12/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 20s 179ms/step - accuracy: 0.7896 - loss: 0.7247 - val_accuracy: 0.7888 - val_loss: 0.6897
+Epoch 13/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 21s 185ms/step - accuracy: 0.7914 - loss: 0.7000 - val_accuracy: 0.7893 - val_loss: 0.6858
+Epoch 14/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 20s 178ms/step - accuracy: 0.7914 - loss: 0.6926 - val_accuracy: 0.7857 - val_loss: 0.6869
+Epoch 15/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 21s 185ms/step - accuracy: 0.8062 - loss: 0.6628 - val_accuracy: 0.7869 - val_loss: 0.6849
+Epoch 16/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 20s 178ms/step - accuracy: 0.8110 - loss: 0.6303 - val_accuracy: 0.7874 - val_loss: 0.6869
+Epoch 17/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 20s 179ms/step - accuracy: 0.8051 - loss: 0.6423 - val_accuracy: 0.7866 - val_loss: 0.6891
+Epoch 18/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 20s 179ms/step - accuracy: 0.8106 - loss: 0.6279 - val_accuracy: 0.7866 - val_loss: 0.6917
+Epoch 19/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 20s 178ms/step - accuracy: 0.8127 - loss: 0.6057 - val_accuracy: 0.7864 - val_loss: 0.6920
+Epoch 20/50
+113/113 ━━━━━━━━━━━━━━━━━━━━ 20s 179ms/step - accuracy: 0.8146 - loss: 0.6018 - val_accuracy: 0.7854 - val_loss: 0.6911
+17/17 ━━━━━━━━━━━━━━━━━━━━ 7s 168ms/step - accuracy: 0.7867 - loss: 0.6994
+Test accuracy: 0.787
+                                precision    recall  f1-score   support
+
+                  Afghan_hound      0.000     0.000     0.000        24
+           African_hunting_dog      0.000     0.000     0.000        17
+                      Airedale      0.000     0.000     0.000        21
+American_Staffordshire_terrier      0.000     0.000     0.000        17
+                   Appenzeller      0.062     0.062     0.062        16
+            Australian_terrier      0.043     0.050     0.047        20
+            Bedlington_terrier      0.000     0.000     0.000        19
+          Bernese_mountain_dog      0.000     0.000     0.000        22
+              Blenheim_spaniel      0.000     0.000     0.000        19
+                 Border_collie      0.000     0.000     0.000        15
+                Border_terrier      0.056     0.056     0.056        18
+                   Boston_bull      0.000     0.000     0.000        19
+          Bouvier_des_Flandres      0.000     0.000     0.000        15
+             Brabancon_griffon      0.000     0.000     0.000        16
+              Brittany_spaniel      0.000     0.000     0.000        16
+                      Cardigan      0.000     0.000     0.000        16
+      Chesapeake_Bay_retriever      0.000     0.000     0.000        17
+                     Chihuahua      0.000     0.000     0.000        16
+                Dandie_Dinmont      0.000     0.000     0.000        18
+                      Doberman      0.000     0.000     0.000        15
+              English_foxhound      0.083     0.062     0.071        16
+                English_setter      0.000     0.000     0.000        17
+              English_springer      0.000     0.000     0.000        16
+                   EntleBucher      0.000     0.000     0.000        21
+                    Eskimo_dog      0.000     0.000     0.000        15
+                French_bulldog      0.000     0.000     0.000        16
+               German_shepherd      0.000     0.000     0.000        16
+   German_short-haired_pointer      0.000     0.000     0.000        16
+                 Gordon_setter      0.000     0.000     0.000        16
+                    Great_Dane      0.000     0.000     0.000        16
+                Great_Pyrenees      0.000     0.000     0.000        22
+    Greater_Swiss_Mountain_dog      0.000     0.000     0.000        17
+                  Ibizan_hound      0.000     0.000     0.000        19
+                  Irish_setter      0.059     0.062     0.061        16
+                 Irish_terrier      0.000     0.000     0.000        17
+           Irish_water_spaniel      0.000     0.000     0.000        15
+               Irish_wolfhound      0.033     0.045     0.038        22
+             Italian_greyhound      0.000     0.000     0.000        19
+              Japanese_spaniel      0.062     0.053     0.057        19
+            Kerry_blue_terrier      0.000     0.000     0.000        18
+            Labrador_retriever      0.059     0.056     0.057        18
+              Lakeland_terrier      0.050     0.050     0.050        20
+                      Leonberg      0.000     0.000     0.000        21
+                         Lhasa      0.000     0.000     0.000        19
+                   Maltese_dog      0.000     0.000     0.000        26
+              Mexican_hairless      0.000     0.000     0.000        16
+                  Newfoundland      0.000     0.000     0.000        20
+               Norfolk_terrier      0.000     0.000     0.000        18
+            Norwegian_elkhound      0.000     0.000     0.000        20
+               Norwich_terrier      0.000     0.000     0.000        19
+          Old_English_sheepdog      0.000     0.000     0.000        17
+                      Pekinese      0.000     0.000     0.000        15
+                      Pembroke      0.000     0.000     0.000        19
+                    Pomeranian      0.000     0.000     0.000        22
+           Rhodesian_ridgeback      0.000     0.000     0.000        18
+                    Rottweiler      0.000     0.000     0.000        16
+                 Saint_Bernard      0.000     0.000     0.000        17
+                        Saluki      0.000     0.000     0.000        20
+                       Samoyed      0.000     0.000     0.000        22
+                Scotch_terrier      0.000     0.000     0.000        16
+            Scottish_deerhound      0.000     0.000     0.000        24
+              Sealyham_terrier      0.000     0.000     0.000        21
+             Shetland_sheepdog      0.000     0.000     0.000        16
+                      Shih-Tzu      0.050     0.045     0.048        22
+                Siberian_husky      0.000     0.000     0.000        20
+     Staffordshire_bullterrier      0.067     0.062     0.065        16
+                Sussex_spaniel      0.000     0.000     0.000        16
+               Tibetan_mastiff      0.000     0.000     0.000        16
+               Tibetan_terrier      0.000     0.000     0.000        21
+                  Walker_hound      0.067     0.062     0.065        16
+                    Weimaraner      0.048     0.062     0.054        16
+        Welsh_springer_spaniel      0.000     0.000     0.000        15
+   West_Highland_white_terrier      0.048     0.059     0.053        17
+             Yorkshire_terrier      0.000     0.000     0.000        17
+                 affenpinscher      0.000     0.000     0.000        15
+                       basenji      0.000     0.000     0.000        21
+                        basset      0.000     0.000     0.000        18
+                        beagle      0.000     0.000     0.000        20
+       black-and-tan_coonhound      0.000     0.000     0.000        16
+                    bloodhound      0.000     0.000     0.000        19
+                      bluetick      0.000     0.000     0.000        18
+                        borzoi      0.000     0.000     0.000        16
+                         boxer      0.000     0.000     0.000        16
+                        briard      0.067     0.062     0.065        16
+                  bull_mastiff      0.000     0.000     0.000        16
+                         cairn      0.000     0.000     0.000        20
+                          chow      0.000     0.000     0.000        20
+                       clumber      0.000     0.000     0.000        15
+                cocker_spaniel      0.000     0.000     0.000        16
+                        collie      0.000     0.000     0.000        16
+        curly-coated_retriever      0.000     0.000     0.000        16
+                         dhole      0.000     0.000     0.000        15
+                         dingo      0.000     0.000     0.000        16
+         flat-coated_retriever      0.000     0.000     0.000        16
+               giant_schnauzer      0.000     0.000     0.000        16
+              golden_retriever      0.000     0.000     0.000        15
+                   groenendael      0.000     0.000     0.000        15
+                      keeshond      0.000     0.000     0.000        16
+                        kelpie      0.000     0.000     0.000        16
+                      komondor      0.000     0.000     0.000        16
+                        kuvasz      0.000     0.000     0.000        15
+                      malamute      0.000     0.000     0.000        18
+                      malinois      0.000     0.000     0.000        15
+            miniature_pinscher      0.000     0.000     0.000        19
+              miniature_poodle      0.000     0.000     0.000        16
+           miniature_schnauzer      0.000     0.000     0.000        16
+                    otterhound      0.000     0.000     0.000        16
+                      papillon      0.045     0.050     0.048        20
+                           pug      0.000     0.000     0.000        20
+                       redbone      0.067     0.067     0.067        15
+                    schipperke      0.000     0.000     0.000        16
+                 silky_terrier      0.000     0.000     0.000        19
+   soft-coated_wheaten_terrier      0.000     0.000     0.000        16
+               standard_poodle      0.000     0.000     0.000        16
+            standard_schnauzer      0.000     0.000     0.000        16
+                    toy_poodle      0.000     0.000     0.000        16
+                   toy_terrier      0.000     0.000     0.000        18
+                        vizsla      0.000     0.000     0.000        16
+                       whippet      0.000     0.000     0.000        19
+       wire-haired_fox_terrier      0.000     0.000     0.000        16
+
+                      accuracy                          0.008      2110
+                     macro avg      0.008     0.008     0.008      2110
+                  weighted avg      0.008     0.008     0.008      2110
