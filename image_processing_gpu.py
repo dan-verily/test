@@ -100,13 +100,12 @@ if FINE_TUNE:
         callbacks=callbacks,
     )
 
-# ---- Evaluate ----
-test_model = keras.models.load_model("dog_breed_model_gpu_fine_tune.keras")
-test_loss, test_acc = test_model.evaluate(test_dataset)
+# ---- Evaluate (in-memory model — reload is broken for preprocess_input) ----
+test_loss, test_acc = model.evaluate(test_dataset)
 print(f"Test accuracy: {test_acc:.3f}")
 
 y_true = np.concatenate([y.numpy() for _, y in test_dataset], axis=0)
-y_prob = test_model.predict(test_dataset, verbose=0)
+y_prob = model.predict(test_dataset, verbose=0)
 y_pred = np.argmax(y_prob, axis=1)
 
 print(classification_report(y_true, y_pred, target_names=test_dataset.class_names, digits=3))
