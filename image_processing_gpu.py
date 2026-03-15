@@ -5,6 +5,8 @@ from keras import layers
 from keras.utils import image_dataset_from_directory
 from sklearn.metrics import classification_report
 
+FINE_TUNE = True
+
 # ---- Paths ----
 new_base_dir = pathlib.Path("dog_breed")
 
@@ -61,7 +63,7 @@ model.summary(line_length=80)
 # ---- Train (full train set + early stopping) ----
 callbacks = [
     keras.callbacks.ModelCheckpoint(
-        filepath="dog_breed_model_gpu.keras",
+        filepath="dog_breed_model_gpu_fine_tune.keras",
         save_best_only=True,
         monitor="val_loss",
     ),
@@ -78,8 +80,28 @@ history = model.fit(
     callbacks=callbacks,
 )
 
+# ---- Fine-tune: unfreeze top layers of base, train at lower LR ----
+if FINE_TUNE:
+    base.trainable = True
+    for layer in base.layers[:-20]:
+        layer.trainable = False
+
+    model.compile(
+        optimizer=keras.optimizers.Adam(1e-4),
+        loss="sparse_categorical_crossentropy",
+        metrics=["accuracy"]
+    )
+
+    print("\nFine-tuning top 20 layers of EfficientNetB0...")
+    history_ft = model.fit(
+        train_dataset,
+        epochs=20,
+        validation_data=validation_dataset,
+        callbacks=callbacks,
+    )
+
 # ---- Evaluate ----
-test_model = keras.models.load_model("dog_breed_model_gpu.keras")
+test_model = keras.models.load_model("dog_breed_model_gpu_fine_tune.keras")
 test_loss, test_acc = test_model.evaluate(test_dataset)
 print(f"Test accuracy: {test_acc:.3f}")
 
