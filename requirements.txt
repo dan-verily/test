@@ -1,0 +1,7 @@
+# Core (adjust versions to match your .venv)
+tensorflow>=2.12
+numpy
+scikit-learn
+
+# Streamlit for the UI
+streamlit>=1.28
