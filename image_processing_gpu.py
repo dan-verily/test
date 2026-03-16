@@ -12,7 +12,7 @@ new_base_dir = pathlib.Path("dog_breed")
 
 # ---- Load datasets ----
 batch_size = 128
-image_size = (224, 224)
+image_size = (300, 300)
 
 train_dataset = image_dataset_from_directory(
     new_base_dir / "train", image_size=image_size, batch_size=batch_size
@@ -26,7 +26,7 @@ test_dataset = image_dataset_from_directory(
 
 # ---- Build model ----
 num_classes = 120
-img_size = (224, 224)
+img_size = (300, 300)
 
 data_augmentation = keras.Sequential([
     layers.RandomFlip("horizontal"),
@@ -35,7 +35,7 @@ data_augmentation = keras.Sequential([
     layers.RandomContrast(0.1),
 ])
 
-base = keras.applications.EfficientNetB0(
+base = keras.applications.EfficientNetB3(
     include_top=False,
     weights="imagenet",
     input_shape=img_size + (3,)
@@ -63,7 +63,7 @@ model.summary(line_length=80)
 # ---- Train (full train set + early stopping) ----
 callbacks = [
     keras.callbacks.ModelCheckpoint(
-        filepath="dog_breed_model_gpu_fine_tune_224_100.keras",
+        filepath="dog_breed_model_gpu_fine_tune_300_100_B3.keras",
         save_best_only=True,
         monitor="val_loss",
     ),
@@ -95,7 +95,7 @@ if FINE_TUNE:
         metrics=["accuracy"]
     )
 
-    print("\nFine-tuning top 20 layers of EfficientNetB0...")
+    print("\nFine-tuning top 100 layers of EfficientNetB3...")
     history_ft = model.fit(
         train_dataset,
         epochs=20,
