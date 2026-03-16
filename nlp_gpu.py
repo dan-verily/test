@@ -25,10 +25,10 @@ MODEL_NAME = "dmis-lab/biobert-base-cased-v1.2"
 MAX_LEN = 256
 BATCH_SIZE = 16
 EPOCHS = 15
-LR = 1e-5
-URGENCY_LOSS_WEIGHT = 2.0
+LR = 2e-5
+URGENCY_LOSS_WEIGHT = 1.0
 NER_LOSS_WEIGHT = 0.3
-FIELD_LOSS_WEIGHT = 0.3
+FIELD_LOSS_WEIGHT = 0.5
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 DATA_PATH = "triage_dataset_2500_clean.jsonl"
