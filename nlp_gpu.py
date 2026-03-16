@@ -27,7 +27,7 @@ LR = 2e-5
 NER_LOSS_WEIGHT = 0.3
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-DATA_PATH = "triage_dataset_2500_clean.jsonl"
+DATA_PATH = "triage_dataset_10k_clean.jsonl"
 
 # ---- NER label scheme (BIO) ----
 ENTITY_TYPES = ["AGE", "BREED", "DURATION", "EXPOSURE", "MEDICATION",
@@ -299,7 +299,7 @@ if __name__ == "__main__":
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             patience_counter = 0
-            torch.save(model.state_dict(), "triage_multitask_model.pt")
+            torch.save(model.state_dict(), "triage_multitask_model_10k.pt")
         else:
             patience_counter += 1
             if patience_counter >= patience:
@@ -311,7 +311,7 @@ if __name__ == "__main__":
     print("TEST SET EVALUATION")
     print("=" * 60)
 
-    model.load_state_dict(torch.load("triage_multitask_model.pt", weights_only=True))
+    model.load_state_dict(torch.load("triage_multitask_model_10k.pt", weights_only=True))
     _, urg_preds, urg_labels, ner_preds, ner_labels = evaluate(
         model, test_loader, urgency_loss_fn, ner_loss_fn
     )

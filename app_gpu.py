@@ -17,7 +17,7 @@ from transformers import AutoTokenizer, AutoModel
 
 # ---- Paths ----
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-BREED_MODEL_PATH = os.path.join(SCRIPT_DIR, "dog_breed_model_gpu_fine_tune_300_100_B3.keras")
+BREED_MODEL_PATH = os.path.join(SCRIPT_DIR, "dog_breed_model_gpu_B3.keras")
 BREED_TRAIN_DIR = os.path.join(SCRIPT_DIR, "dog_breed", "train")
 NLP_MODEL_PATH = os.path.join(SCRIPT_DIR, "triage_multitask_model.pt")
 IMG_SIZE = (300, 300)
