@@ -22,7 +22,7 @@ MODEL_NAME = "dmis-lab/biobert-base-cased-v1.2"
 MAX_LEN = 256
 BATCH_SIZE = 16
 EPOCHS = 15
-LR = 2e-5
+LR = 1e-5
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 DATA_PATH = "triage_dataset_2500_clean.jsonl"
@@ -192,7 +192,7 @@ def train_epoch(model, dataloader, optimizer, urgency_loss_fn, ner_loss_fn):
             ner_labels.view(-1),
         )
 
-        loss = loss_urg + loss_ner
+        loss = loss_urg + 0.3 * loss_ner
 
         optimizer.zero_grad()
         loss.backward()
