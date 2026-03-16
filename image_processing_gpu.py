@@ -63,7 +63,7 @@ model.summary(line_length=80)
 # ---- Train (full train set + early stopping) ----
 callbacks = [
     keras.callbacks.ModelCheckpoint(
-        filepath="dog_breed_model_gpu_fine_tune_224.keras",
+        filepath="dog_breed_model_gpu_fine_tune_224_100.keras",
         save_best_only=True,
         monitor="val_loss",
     ),
@@ -83,7 +83,7 @@ history = model.fit(
 # ---- Fine-tune: unfreeze top layers of base, train at lower LR ----
 if FINE_TUNE:
     base.trainable = True
-    for layer in base.layers[:-20]:
+    for layer in base.layers[:-100]:
         layer.trainable = False
 
     model.compile(
