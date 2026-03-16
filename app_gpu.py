@@ -1,8 +1,8 @@
 """
-Streamlit UI: upload image + enter description -> urgency + NER + structured fields + dog breed.
+Streamlit UI: upload image + enter description -> urgency + NER + dog breed.
 Uses separate models:
   - Image (Keras): EfficientNetB3 for breed classification
-  - Text (PyTorch/BioBERT): urgency + NER + structured fields
+  - Text (PyTorch/BioBERT): urgency + NER
 
 Run: streamlit run app_gpu.py
 """
@@ -31,9 +31,7 @@ PRIORITY_LABELS = {
     5: "Blue / Non-Urgent (least urgent)",
 }
 
-PRIORITY_COLORS = {1: "red", 2: "orange", 3: "yellow", 4: "green", 5: "blue"}
-
-# ---- NER / Structured field config (must match nlp_gpu.py) ----
+# ---- NER config (must match nlp_gpu.py) ----
 ENTITY_TYPES = ["AGE", "BREED", "DURATION", "EXPOSURE", "MEDICATION",
                 "PRE_EXISTING", "SEX_STATUS", "SYMPTOM", "TOXIN"]
 
@@ -45,28 +43,15 @@ NUM_NER_LABELS = len(NER_LABELS)
 
 NUM_URGENCY_CLASSES = 5
 
-STRUCTURED_FIELDS = {
-    "sex":                  ["male", "female", "null"],
-    "reproductive_status":  ["intact", "spayed", "neutered", "null"],
-    "appetite":             ["normal", "reduced", "anorexic", "null"],
-    "urination":            ["normal", "straining", "absent", "excessive", "null"],
-    "defecation":           ["normal", "diarrhea", "bloody", "null"],
-    "energy_level":         ["alert", "lethargic", "obtunded", "unresponsive", "null"],
-}
-
 
 # ---- NLP Model (same as nlp_gpu.py) ----
 class TriageMultiTaskModel(nn.Module):
-    def __init__(self, model_name, num_urgency_classes, num_ner_labels, structured_fields):
+    def __init__(self, model_name, num_urgency_classes, num_ner_labels):
         super().__init__()
         self.bert = AutoModel.from_pretrained(model_name)
         hidden_size = self.bert.config.hidden_size
         self.urgency_head = nn.Linear(hidden_size, num_urgency_classes)
         self.ner_head = nn.Linear(hidden_size, num_ner_labels)
-        self.field_heads = nn.ModuleDict({
-            field: nn.Linear(hidden_size, len(classes))
-            for field, classes in structured_fields.items()
-        })
 
     def forward(self, input_ids, attention_mask):
         outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
@@ -74,10 +59,7 @@ class TriageMultiTaskModel(nn.Module):
         token_outputs = outputs.last_hidden_state
         urgency_logits = self.urgency_head(cls_output)
         ner_logits = self.ner_head(token_outputs)
-        field_logits = {
-            field: head(cls_output) for field, head in self.field_heads.items()
-        }
-        return urgency_logits, ner_logits, field_logits
+        return urgency_logits, ner_logits
 
 
 # ---- Load models ----
@@ -98,9 +80,7 @@ def load_nlp_model():
         return None, None
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     tokenizer = AutoTokenizer.from_pretrained(NLP_MODEL_NAME)
-    model = TriageMultiTaskModel(
-        NLP_MODEL_NAME, NUM_URGENCY_CLASSES, NUM_NER_LABELS, STRUCTURED_FIELDS
-    )
+    model = TriageMultiTaskModel(NLP_MODEL_NAME, NUM_URGENCY_CLASSES, NUM_NER_LABELS)
     model.load_state_dict(torch.load(NLP_MODEL_PATH, map_location=device, weights_only=True))
     model.to(device)
     model.eval()
@@ -138,7 +118,7 @@ def predict_text(nlp_model, tokenizer, description):
     attention_mask = encoding["attention_mask"].to(device)
 
     with torch.no_grad():
-        urg_logits, ner_logits, fld_logits = nlp_model(input_ids, attention_mask)
+        urg_logits, ner_logits = nlp_model(input_ids, attention_mask)
 
     # Urgency
     urg_probs = torch.softmax(urg_logits, dim=1)[0]
@@ -185,13 +165,7 @@ def predict_text(nlp_model, tokenizer, description):
         phrase = tokenizer.convert_tokens_to_string(toks)
         entity_list.append((etype, phrase))
 
-    # Structured fields
-    field_results = {}
-    for field, classes in STRUCTURED_FIELDS.items():
-        pred_id = fld_logits[field].argmax(dim=1).item()
-        field_results[field] = classes[pred_id]
-
-    return priority, prob_dict, entity_list, field_results
+    return priority, prob_dict, entity_list
 
 
 # ---- UI ----
@@ -199,7 +173,7 @@ st.set_page_config(page_title="Pet Triage", layout="centered")
 st.title("Pet Triage: Image + Description")
 st.markdown(
     "Upload a pet image and describe the situation. "
-    "Get **urgency**, **extracted entities**, **patient info**, and **breed prediction**."
+    "Get **urgency**, **extracted entities**, and **breed prediction**."
 )
 
 breed_model, breed_class_names = load_breed_model_and_names()
@@ -232,7 +206,7 @@ if st.button("Analyze", type="primary"):
     else:
         with st.spinner("Running models..."):
             # Text analysis (always)
-            priority, prob_dict, entity_list, field_results = predict_text(
+            priority, prob_dict, entity_list = predict_text(
                 nlp_model, tokenizer, description
             )
             # Image analysis (if uploaded)
@@ -244,19 +218,6 @@ if st.button("Analyze", type="primary"):
         # ---- Urgency ----
         st.success(f"**Priority: {priority}** — {PRIORITY_LABELS.get(priority, '?')}")
         st.progress(prob_dict[priority], text=f"Urgency confidence: {prob_dict[priority]:.0%}")
-
-        # ---- Patient Info (structured fields) ----
-        st.subheader("Patient Info")
-        field_display = {
-            "sex": "Sex", "reproductive_status": "Reproductive Status",
-            "appetite": "Appetite", "urination": "Urination",
-            "defecation": "Defecation", "energy_level": "Energy Level",
-        }
-        info_cols = st.columns(3)
-        for i, (field, value) in enumerate(field_results.items()):
-            with info_cols[i % 3]:
-                display_val = value if value != "null" else "—"
-                st.metric(field_display.get(field, field), display_val)
 
         # ---- Entities (NER) ----
         if entity_list:
