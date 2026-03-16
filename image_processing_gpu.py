@@ -87,7 +87,7 @@ if FINE_TUNE:
         layer.trainable = False
 
     model.compile(
-        optimizer=keras.optimizers.Adam(1e-4),
+        optimizer=keras.optimizers.Adam(1e-5),
         loss="sparse_categorical_crossentropy",
         metrics=["accuracy"]
     )
