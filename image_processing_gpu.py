@@ -85,6 +85,9 @@ if FINE_TUNE:
     base.trainable = True
     for layer in base.layers[:-100]:
         layer.trainable = False
+    for layer in base.layers:
+        if isinstance(layer, layers.BatchNormalization):
+            layer.trainable = False
 
     model.compile(
         optimizer=keras.optimizers.Adam(1e-5),
