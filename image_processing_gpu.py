@@ -12,7 +12,7 @@ new_base_dir = pathlib.Path("dog_breed")
 
 # ---- Load datasets ----
 batch_size = 128
-image_size = (160, 160)
+image_size = (224, 224)
 
 train_dataset = image_dataset_from_directory(
     new_base_dir / "train", image_size=image_size, batch_size=batch_size
@@ -26,7 +26,7 @@ test_dataset = image_dataset_from_directory(
 
 # ---- Build model ----
 num_classes = 120
-img_size = (160, 160)
+img_size = (224, 224)
 
 data_augmentation = keras.Sequential([
     layers.RandomFlip("horizontal"),
@@ -63,7 +63,7 @@ model.summary(line_length=80)
 # ---- Train (full train set + early stopping) ----
 callbacks = [
     keras.callbacks.ModelCheckpoint(
-        filepath="dog_breed_model_gpu_fine_tune.keras",
+        filepath="dog_breed_model_gpu_fine_tune_224.keras",
         save_best_only=True,
         monitor="val_loss",
     ),
