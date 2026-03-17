@@ -19,7 +19,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 
 # ---- Config ----
-MODEL_NAME = "microsoft/deberta-v3-base"
+MODEL_NAME = "dmis-lab/biobert-base-cased-v1.2"
 MAX_LEN = 256
 BATCH_SIZE = 16
 EPOCHS = 15
