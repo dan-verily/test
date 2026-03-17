@@ -273,7 +273,18 @@ if __name__ == "__main__":
     model = TriageMultiTaskModel(MODEL_NAME, NUM_URGENCY_CLASSES, NUM_NER_LABELS).to(DEVICE)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=LR)
-    urgency_loss_fn = nn.CrossEntropyLoss()
+
+    # Class weights for imbalanced urgency distribution
+    from collections import Counter
+    urgency_counts = Counter(s["urgency"] for s in train_samples)
+    n_train = len(train_samples)
+    urgency_weights = torch.tensor(
+        [n_train / (NUM_URGENCY_CLASSES * urgency_counts[i]) for i in range(NUM_URGENCY_CLASSES)],
+        dtype=torch.float32,
+    ).to(DEVICE)
+    print(f"Urgency class weights: {[f'{w:.2f}' for w in urgency_weights.tolist()]}")
+
+    urgency_loss_fn = nn.CrossEntropyLoss(weight=urgency_weights)
     ner_loss_fn = nn.CrossEntropyLoss(ignore_index=-100)
 
     # Train
@@ -299,7 +310,7 @@ if __name__ == "__main__":
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             patience_counter = 0
-            torch.save(model.state_dict(), "triage_multitask_model_10k.pt")
+            torch.save(model.state_dict(), "triage_multitask_model_10k_wl.pt")
         else:
             patience_counter += 1
             if patience_counter >= patience:
@@ -311,7 +322,7 @@ if __name__ == "__main__":
     print("TEST SET EVALUATION")
     print("=" * 60)
 
-    model.load_state_dict(torch.load("triage_multitask_model_10k.pt", weights_only=True))
+    model.load_state_dict(torch.load("triage_multitask_model_10k_wl.pt", weights_only=True))
     _, urg_preds, urg_labels, ner_preds, ner_labels = evaluate(
         model, test_loader, urgency_loss_fn, ner_loss_fn
     )
